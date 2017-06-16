@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>NoteBook</title>
+		<link rel="stylesheet" href="css/base.css">
+		<link rel="stylesheet" href="css/index.css">
+		<script src="js/angular.min.js"></script>
+	</head>
+	<body ng-app="Todos">
+		<section class="todoapp" ng-controller="TodosCtrl">
+			<header class="header">
+				<h1>NOTE</h1>
+				<form ng-submit="add()">
+					<input class="new-todo" ng-model="todo" placeholdder="You need to do something!!" autofocus>
+				</form>
+			</header>
+			<section class="main">
+				<input class="toggle-all" type="checkbox">
+				<label for="toggle-all">Mark all as complete</label>
+				<ul class="todo-list">
+					<li ng-repeat="todo in todos" ng-class="{completed: todo.flag}">
+						<div class="view">
+							<input class="toggle" ng-click="toggle($index)" type="checkbox" ng-checked="todo.flag">
+							<label>{{todo.text}}</label>
+							<button class="destroy" ng-click="delete($index)"></button>
+						</div>
+						<input class="edit" value="Create a TodoMVC template">
+					</li>
+				</ul>
+			</section>
+			<footer class="footer">
+				<span class="todo-count"><strong>{{length}}</strong> item left</span>
+				<button class="clear-completed" ng-click="clear()">Clear completed</button>
+			</footer>
+		</section>
+		<script>
+			var Todos = angular.module('Todos', []);
+
+			Todos.controller('TodosCtrl', ['$scope', function ($scope) {
+				// 声明一个数组，用来存储待办事项
+				$scope.todos = [
+					{text: '写日记', flag: true},
+					{text: '做饭', flag: false},
+					{text: '洗脸', flag: true},
+					{text: '刷牙', flag: true},
+				];
+				$scope.add = function () {
+					// 向数组中添加数据
+					$scope.todos.push({text: $scope.todo, flag: false});
+					// 清空表单
+					$scope.todo = '';
+					$scope.length=$scope.count();
+					
+				};
+
+				// 切换事项状态（完成/未完成）
+				$scope.toggle = function (index) {
+					// 改变数组中某单元的flag属性
+					$scope.todos[index].flag = !$scope.todos[index].flag;
+					$scope.length=$scope.count();
+				};
+
+				// 删除事项
+				$scope.delete = function(index) {
+					// 将数组中某单元删除
+					$scope.todos.splice(index, 1);
+					$scope.length=$scope.count();
+					
+				};
+				$scope.clear = function (){
+					for (var i=0 ;i< $scope.todos.length ; i++){
+						if($scope.todos[i].flag==true){
+							$scope.delete(i);
+							$scope.clear();
+						}
+
+					}
+				};
+				$scope.count=function(){
+					var count=0;
+					for(var i=0;i<$scope.todos.length;i++){
+						if($scope.todos[i].flag==false){
+							count++;
+						}
+					}
+					return count;
+				}
+				$scope.length=$scope.count();
+			}]);
+
+		</script>
+	</body>
+</html>
